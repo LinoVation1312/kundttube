@@ -23,22 +23,26 @@ uploaded_file_2 = st.sidebar.file_uploader("Upload the second Excel file", type=
 
 def load_data_from_excel(file):
     """
-    Load data from an Excel file.
+    Load data from an Excel file and validate the expected structure.
     """
     try:
         # Load the Excel file
         df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (with titles in the first row)
 
-        # Check if necessary columns exist
+        # Validate that the file has at least two columns (frequencies and absorption data)
         if df.shape[1] < 2:
-            raise ValueError("The Excel file does not have enough columns for frequencies and absorption data.")
-        
+            raise ValueError("The Excel file must have at least two columns: one for frequencies and one for absorption data.")
+
         # Extract frequencies (column A)
         frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
         
         # Extract absorption data (all other columns)
         absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all").values  # Remove rows where all values are NaN
         
+        # Validate that there are no missing frequency values
+        if frequencies.size == 0:
+            raise ValueError("The frequency column is empty. Please ensure that the first column contains frequency values.")
+
         # Define thicknesses and densities (example, adapt according to your file)
         thicknesses = np.array([10, 20, 30])  # Thicknesses: 10, 20, 30 mm
         densities = np.array([75, 110, 150])  # Densities: 75, 110, 150 kg/m³
@@ -46,7 +50,12 @@ def load_data_from_excel(file):
         return frequencies, thicknesses, densities, absorption_data
 
     except Exception as e:
+        # Display a helpful error message to the user
         st.error(f"Error loading file: {e}")
+        st.warning(
+            "Please ensure the file contains at least two columns: the first for frequencies (numeric values) "
+            "and the others for absorption data (numeric values). The file should be in .xlsx format."
+        )
         return None, None, None, None
 
 # Add spinner for loading process
@@ -126,9 +135,9 @@ if uploaded_file_1 and uploaded_file_2:
         # Add a legend with improved readability
         ax.legend(
             fontsize=14,
-            loc='upper left',
+            loc='upper right',
             facecolor='black',  # Keep the background of the legend black
-            framealpha=0.5,     # Add transparency to the frame
+            framealpha=0.7,     # Add transparency to the frame
             edgecolor='white',  # White edge for the legend frame
             labelcolor='white'  # Set the legend text color to white
         )
