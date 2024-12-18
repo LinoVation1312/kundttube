@@ -126,14 +126,14 @@ if uploaded_file_1 and uploaded_file_2:
 
         # Comparer les aires
         def format_filename(filename):
-            return filename.replace("_", " ").replace("-", " ").replace("FG", "Fiber Glass").replace("fg", "Fiber Glass")
+            return filename.replace("_", " ").replace("-", " ").replace("FG", "Fiber Glass").replace("fg", "Fiber Glass").replace(".", " ")
 
         if area_1 > area_2:
             diff_percentage = ((area_1 - area_2) / area_2) * 100
-            absorption_message = f"{format_filename(file_name_1)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_2)}.".capitalize()
+            absorption_message = f"The {format_filename(file_name_1)} absorbs {diff_percentage:.2f}% more than the {format_filename(file_name_2)}.".capitalize()
         else:
             diff_percentage = ((area_2 - area_1) / area_1) * 100
-            absorption_message = f"{format_filename(file_name_2)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_1)}.".capitalize()
+            absorption_message = f"The {format_filename(file_name_2)} absorbs {diff_percentage:.2f}% more than the {format_filename(file_name_1)}.".capitalize()
 
         # Plotting les courbes avec la mention semi-log
         fig, ax = plt.subplots(figsize=(12, 8))
