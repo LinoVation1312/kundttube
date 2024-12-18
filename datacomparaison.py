@@ -116,8 +116,8 @@ if uploaded_file_1 and uploaded_file_2:
         fig, ax = plt.subplots(figsize=(12, 8))
 
         # Change the background color of the graph
-        fig.patch.set_facecolor('#6f6f6f')  # Darker gray background
-        ax.set_facecolor('#afafaf')  # Slightly lighter dark gray axis background
+        fig.patch.set_facecolor('#616161')  # Darker gray background
+        ax.set_facecolor('#dfdfdf')  # Slightly lighter dark gray axis background
         ax.tick_params(axis='both', colors='white', labelsize=12)  # White tick color with larger labels
 
         # Plot the curves with enhanced styling
@@ -143,7 +143,7 @@ if uploaded_file_1 and uploaded_file_2:
         )
 
         # Adjust the grid for better visual appearance
-        ax.grid(True, linestyle="--", color='white', alpha=0.4)  # Subtle lighter grid lines
+        ax.grid(True, linestyle="--", color='black', alpha=0.8)  # Subtle lighter grid lines
 
         # Add annotations (optional, but this can highlight key data points)
         max_y_1 = np.max(absorption_curve_1)
