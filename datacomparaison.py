@@ -23,38 +23,39 @@ uploaded_file_2 = st.sidebar.file_uploader("Upload the second Excel file", type=
 
 def load_data_from_excel(file):
     """
-    Load and validate data from an Excel file.
+    Load data from an Excel file and validate its format.
     """
     try:
         # Load the Excel file
-        df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (assume titles in first row)
-        
-        # Validation: Check if the format matches the expected structure
-        if df.shape[1] < 2:  # At least two columns (A: Frequencies, others: data)
-            raise ValueError("The file must contain at least two columns: frequencies in column A, and data in subsequent columns.")
+        df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (with titles in the first row)
 
-        if not pd.api.types.is_numeric_dtype(df.iloc[:, 0]):  # Ensure column A is numeric
-            raise ValueError("The first column (frequencies) must contain numeric values.")
+        # Validation: Ensure there are at least two columns (frequencies in column A and other data columns)
+        if df.shape[1] < 2:
+            raise ValueError("Le fichier doit contenir au moins deux colonnes : une colonne pour les fréquences (colonne A) et d'autres colonnes pour les données.")
+
+        # Validation: Ensure the first column (frequencies) is numeric
+        if not pd.api.types.is_numeric_dtype(df.iloc[:, 0]):
+            raise ValueError("La première colonne (fréquences) doit contenir des valeurs numériques.")
 
         # Extract frequencies (column A) and absorption data (other columns)
         frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
-        absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all").values  # Remove rows where all values are NaN
+        absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all")  # Remove rows where all values are NaN
+
+        # Ensure absorption data is numeric
+        if not all(pd.api.types.is_numeric_dtype(absorption_data[col]) for col in absorption_data.columns):
+            raise ValueError("Toutes les colonnes de données doivent contenir des valeurs numériques.")
+
+        absorption_data = absorption_data.values  # Convert to numpy array
 
         # Define thicknesses and densities (example, adapt according to your file)
         thicknesses = np.array([10, 20, 30])  # Thicknesses: 10, 20, 30 mm
         densities = np.array([75, 110, 150])  # Densities: 75, 110, 150 kg/m³
-
+        
         return frequencies, thicknesses, densities, absorption_data
 
-    except Exception as e:
-        # Show an error message if the file format is incorrect
-        st.error(
-            f"Error loading file: {file.name}. Ensure the file follows the expected format:\n"
-            "- The first row must contain column titles.\n"
-            "- Column A should contain frequencies.\n"
-            "- Other columns should contain data.\n\nDetails: {e}"
-        )
-        return None, None, None, None  # Return empty values to prevent crashes
+    except ValueError as e:
+        st.error(f"Erreur de format : {str(e)}")
+        return None, None, None, None
 
 # Check if files have been uploaded
 if uploaded_file_1 is not None and uploaded_file_2 is not None:
@@ -62,13 +63,9 @@ if uploaded_file_1 is not None and uploaded_file_2 is not None:
     frequencies_1, thicknesses_1, densities_1, absorption_data_1 = load_data_from_excel(uploaded_file_1)
     frequencies_2, thicknesses_2, densities_2, absorption_data_2 = load_data_from_excel(uploaded_file_2)
     
-    # Ensure data is loaded successfully before proceeding
+    # If any of the files are invalid, display an error message
     if frequencies_1 is None or frequencies_2 is None:
-        st.stop()  # Stop execution if the files are invalid
-    
-    # Extract file names without the '.xlsx' extension
-    file_name_1 = os.path.splitext(uploaded_file_1.name)[0]
-    file_name_2 = os.path.splitext(uploaded_file_2.name)[0]
+        st.warning("Les fichiers chargés ne sont pas au format attendu. Veuillez vous assurer qu'ils contiennent des données valides.")
 else:
     # Use default data if one or both files are not uploaded
     file_name_1 = "File_1"
@@ -144,3 +141,23 @@ if uploaded_file_1 and uploaded_file_2:
         )
 else:
     st.warning("Please upload your Excel files to view the graph.")
+
+# Function to save the graph as a PDF
+def save_as_pdf(fig):
+    """
+    Save the current graph as a PDF and return it as a downloadable file.
+    """
+    pdf_buffer = BytesIO()
+    if fig:
+        fig.savefig(pdf_buffer, format="pdf")
+        pdf_buffer.seek(0)
+    return pdf_buffer
+
+# Add a download button only if the figure exists
+if fig:
+    st.download_button(
+        label="Download Comparison as PDF",
+        data=save_as_pdf(fig),
+        file_name="acoustic_comparison.pdf",
+        mime="application/pdf"
+    )
