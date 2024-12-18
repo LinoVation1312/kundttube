@@ -105,11 +105,17 @@ fig = None  # Initialize fig to None to prevent errors
 
 # Extract absorption data for the selected frequency, thickness, and density
 if uploaded_file_1 and uploaded_file_2:
-    absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
-    absorption_curve_2 = absorption_data_2[:, thickness_index_2 * len(densities_2) + density_index_2]
-
-    # Try plotting the absorption curves
     try:
+        absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
+        absorption_curve_2 = absorption_data_2[:, thickness_index_2 * len(densities_2) + density_index_2]
+
+        # Ensure the curves are correctly indexed
+        if len(frequencies_1) != len(absorption_curve_1):
+            raise ValueError("Les dimensions des données de fréquence et d'absorption ne correspondent pas dans le premier fichier.")
+
+        if len(frequencies_2) != len(absorption_curve_2):
+            raise ValueError("Les dimensions des données de fréquence et d'absorption ne correspondent pas dans le second fichier.")
+        
         fig, ax = plt.subplots(figsize=(10, 8))
 
         # Change the background color of the graph
