@@ -168,7 +168,7 @@ if uploaded_file_1 and uploaded_file_2:
         # Add a note indicating the semi-logarithmic scale
         ax.text(
             0.95, -0.1,  # Position relative à l'axe (x=95% à droite, y=10% en dessous)
-            "Note: The X-axis uses a semi-logarithmic scale", 
+            "X-axis : semi-logarithmic scale", 
             transform=ax.transAxes,  # Position en coordonnées relatives
             fontsize=12, 
             color="white", 
