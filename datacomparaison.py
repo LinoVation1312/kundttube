@@ -109,7 +109,6 @@ fig = None  # Initialize fig to None to prevent errors
 # Liste des fréquences spécifiques pour les étiquettes de l'axe X
 freq_ticks = [80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300]
 
-
 if uploaded_file_1 and uploaded_file_2:
     # Extraire les données d'absorption pour chaque fichier
     absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
@@ -126,15 +125,15 @@ if uploaded_file_1 and uploaded_file_2:
         area_2 = calculate_area(frequencies_2, absorption_curve_2)
 
         # Comparer les aires
+        def format_filename(filename):
+            return filename.replace("_", " ")
+
         if area_1 > area_2:
             diff_percentage = ((area_1 - area_2) / area_2) * 100
-            absorption_message = f"{file_name_1} absorbe {diff_percentage:.2f}% de plus que {file_name_2}."
+            absorption_message = f"{format_filename(file_name_1)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_2)}."
         else:
             diff_percentage = ((area_2 - area_1) / area_1) * 100
-            absorption_message = f"{file_name_2} absorbe {diff_percentage:.2f}% de plus que {file_name_1}."
-
-        # Afficher le message dans Streamlit
-        st.markdown(f"### {absorption_message}")
+            absorption_message = f"{format_filename(file_name_2)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_1)}."
 
         # Plotting les courbes avec la mention semi-log
         fig, ax = plt.subplots(figsize=(12, 8))
@@ -145,8 +144,8 @@ if uploaded_file_1 and uploaded_file_2:
         ax.tick_params(axis='both', colors='white', labelsize=12)
 
         # Courbes
-        ax.plot(frequencies_1, absorption_curve_1, label=file_name_1, color="#1f77b4", linestyle='-', marker="x", markersize=9, linewidth=2.2)
-        ax.plot(frequencies_2, absorption_curve_2, label=file_name_2, color="#ff7f0e", linestyle='-', marker="x", markersize=9, linewidth=2.2)
+        ax.plot(frequencies_1, absorption_curve_1, label=format_filename(file_name_1), color="#1f77b4", linestyle='-', marker="x", markersize=9, linewidth=2.2)
+        ax.plot(frequencies_2, absorption_curve_2, label=format_filename(file_name_2), color="#ff7f0e", linestyle='-', marker="x", markersize=9, linewidth=2.2)
 
         # Échelle logarithmique
         ax.set_xscale('log')
@@ -188,6 +187,12 @@ if uploaded_file_1 and uploaded_file_2:
         # Afficher le graphique dans Streamlit
         st.pyplot(fig)
 
+        # Afficher le message sous le graphique en bleu clair
+        st.markdown(
+            f'<p style="color: lightblue; font-size: 18px; text-align: center; font-weight: bold;">{absorption_message}</p>',
+            unsafe_allow_html=True
+        )
+
     except ValueError as e:
         # Gestion des erreurs
         st.markdown(
@@ -196,6 +201,7 @@ if uploaded_file_1 and uploaded_file_2:
         )
 else:
     st.warning("Please upload your Excel files to view the graph.")
+    
 # Function to save the graph as a PDF
 def save_as_pdf(fig):
     """
