@@ -121,8 +121,8 @@ if uploaded_file_1 and uploaded_file_2:
         ax.tick_params(axis='both', colors='white', labelsize=12)  # White tick color with larger labels
 
         # Plot the curves with enhanced styling
-        ax.plot(frequencies_1, absorption_curve_1, label=file_name_1, color="#1f77b4", linestyle='-', marker="x", markersize=6, linewidth=1.6)
-        ax.plot(frequencies_2, absorption_curve_2, label=file_name_2, color="#ff7f0e", linestyle='-', marker="x", markersize=6, linewidth=1.6)
+        ax.plot(frequencies_1, absorption_curve_1, label=file_name_1, color="#1f77b4", linestyle='-', marker="x", markersize=9, linewidth=2.2)
+        ax.plot(frequencies_2, absorption_curve_2, label=file_name_2, color="#ff7f0e", linestyle='-', marker="x", markersize=9, linewidth=2.2)
 
         # Add a title with custom font and styling
         ax.set_title(f"Absorption Curves for Thickness {thickness_selected} mm and Density {density_selected} kg/m³", 
