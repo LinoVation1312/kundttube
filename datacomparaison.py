@@ -142,6 +142,13 @@ if uploaded_file_1 and uploaded_file_2:
                 unsafe_allow_html=True
             )
 
+                    # Display the absorption message
+        st.markdown(
+            f'<p style="color: lightblue; font-size: 18px; text-align: center; font-weight: bold;"GitHub Source : https://github.com/LinoVation1312/kundttube </p>',
+            unsafe_allow_html=True
+        )
+
+
     except ValueError as e:
         st.error(f"Dimension error: {e}")
 else:
