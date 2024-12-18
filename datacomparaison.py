@@ -127,15 +127,26 @@ if uploaded_file_1 and uploaded_file_2:
 
         st.pyplot(fig)
 
+        # Display the absorption message
         st.markdown(
             f'<p style="color: lightblue; font-size: 18px; text-align: center; font-weight: bold;">{absorption_message}</p>',
             unsafe_allow_html=True
         )
 
+        # Display a warning if the selected thickness is 30 mm
+        if thickness_selected == 30:
+            st.markdown(
+                '<p style="color: orange; font-size: 16px; text-align: center; font-style: italic;">'
+                'Warning: Data may not be representative. This thickness is at the limit of the Kundt tube\'s operating range.'
+                '</p>',
+                unsafe_allow_html=True
+            )
+
     except ValueError as e:
         st.error(f"Dimension error: {e}")
 else:
     st.warning("Please upload your Excel files to view the graph.")
+
 
 # Function to save the graph as a PDF
 def save_as_pdf(fig):
