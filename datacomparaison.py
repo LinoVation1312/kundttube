@@ -157,7 +157,7 @@ if uploaded_file_1 and uploaded_file_2:
         ax.set_title(f"Absorption Curves for Thickness {thickness_selected} mm and Density {density_selected} kg/m³", 
                      color='white', fontsize=18, fontweight='bold', fontname="Arial", pad=20)
         ax.set_xlabel("Frequency (Hz)", color='white', fontsize=16, fontweight='bold', fontname="Arial")
-        ax.set_ylabel("Acoustic Absorption", color='white', fontsize=16, fontweight='bold', fontname="Arial")
+        ax.set_ylabel("Alpha (Kundt)", color='white', fontsize=16, fontweight='bold', fontname="Arial")
 
         # Légende
         ax.legend(
