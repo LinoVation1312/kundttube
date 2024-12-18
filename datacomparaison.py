@@ -136,3 +136,40 @@ if uploaded_file_1 and uploaded_file_2:
         st.error(f"Dimension error: {e}")
 else:
     st.warning("Please upload your Excel files to view the graph.")
+
+# Function to save the graph as a PDF
+def save_as_pdf(fig):
+    """
+    Save the current graph as a PDF and return it as a downloadable file.
+    """
+    pdf_buffer = BytesIO()
+    if fig:
+        fig.savefig(pdf_buffer, format="pdf")
+        pdf_buffer.seek(0)
+    return pdf_buffer
+
+# Function to save the graph as a JPEG
+def save_as_jpeg(fig):
+    """
+    Save the current graph as a JPEG and return it as a downloadable file.
+    """
+    jpeg_buffer = BytesIO()
+    if fig:
+        fig.savefig(jpeg_buffer, format="jpeg", dpi=300)
+        jpeg_buffer.seek(0)
+    return jpeg_buffer
+
+# Add download buttons for PDF and JPEG
+if fig:
+    st.download_button(
+        label="Download Comparison as PDF",
+        data=save_as_pdf(fig),
+        file_name="acoustic_comparison.pdf",
+        mime="application/pdf"
+    )
+    st.download_button(
+        label="Download Comparison as JPEG",
+        data=save_as_jpeg(fig),
+        file_name="acoustic_comparison.jpeg",
+        mime="image/jpeg"
+    )
