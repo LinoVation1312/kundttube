@@ -106,6 +106,9 @@ if uploaded_file_2 is not None:
 
 fig = None  # Initialize fig to None to prevent errors
 
+# Liste des fréquences spécifiques pour les étiquettes de l'axe X
+freq_ticks = [80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300]
+
 # Extract absorption data for the selected frequency, thickness, and density
 if uploaded_file_1 and uploaded_file_2:
     absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
@@ -131,6 +134,12 @@ if uploaded_file_1 and uploaded_file_2:
         # Add axis labels with custom styling
         ax.set_xlabel("Frequency (Hz)", color='white', fontsize=16, fontweight='bold', fontname="Arial")
         ax.set_ylabel("Acoustic Absorption", color='white', fontsize=16, fontweight='bold', fontname="Arial")
+
+        # Set the X-axis to a logarithmic scale with the specific ticks
+        ax.set_xscale('log')  # Échelle logarithmique pour l'axe X
+        ax.set_xticks(freq_ticks)  # Définir les fréquences spécifiques comme ticks
+        ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())  # Forcer les ticks à s'afficher sous forme décimale
+        ax.set_xticklabels(freq_ticks, rotation=25, ha="right", fontsize=12, color='white')  # Rotation et couleur des étiquettes
 
         # Add a legend with improved readability
         ax.legend(
@@ -167,7 +176,6 @@ if uploaded_file_1 and uploaded_file_2:
         )
 else:
     st.warning("Please upload your Excel files to view the graph.")
-
 # Function to save the graph as a PDF
 def save_as_pdf(fig):
     """
