@@ -174,7 +174,7 @@ if uploaded_file_1 and uploaded_file_2:
 
         # Mention échelle semi-log
         ax.text(
-            0.95, -0.1,
+            0.98, -0.20,
             "X-axis : semi-logarithmic scale", 
             transform=ax.transAxes,
             fontsize=12,
