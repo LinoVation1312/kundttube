@@ -161,3 +161,21 @@ if fig:
         file_name="acoustic_comparison.pdf",
         mime="application/pdf"
     )
+def save_as_jpeg(fig):
+    """
+    Save the current graph as a JPEG and return it as a downloadable file.
+    """
+    jpeg_buffer = BytesIO()
+    if fig:
+        fig.savefig(jpeg_buffer, format="jpeg")
+        jpeg_buffer.seek(0)
+    return jpeg_buffer
+
+# Add a download button for the JPEG image only if the figure exists
+if fig:
+    st.download_button(
+        label="Download Comparison as JPEG",
+        data=save_as_jpeg(fig),
+        file_name="acoustic_comparison.jpeg",
+        mime="image/jpeg"
+    )
