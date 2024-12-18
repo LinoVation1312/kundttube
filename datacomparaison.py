@@ -126,9 +126,9 @@ if uploaded_file_1 and uploaded_file_2:
         # Add a legend with improved readability
         ax.legend(
             fontsize=14,
-            loc='upper right',
+            loc='upper left',
             facecolor='black',  # Keep the background of the legend black
-            framealpha=0.7,     # Add transparency to the frame
+            framealpha=0.5,     # Add transparency to the frame
             edgecolor='white',  # White edge for the legend frame
             labelcolor='white'  # Set the legend text color to white
         )
