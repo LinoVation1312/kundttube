@@ -8,7 +8,7 @@ import os
 # Streamlit application configuration
 st.set_page_config(
     page_title="Acoustic Analysis",
-    page_icon=":chart_with_upwards_trend:",
+    page_icon=":chart_with_upwards_trend:",  # Icon chosen for the application
     layout="centered",
     initial_sidebar_state="expanded"
 )
@@ -23,39 +23,22 @@ uploaded_file_2 = st.sidebar.file_uploader("Upload the second Excel file", type=
 
 def load_data_from_excel(file):
     """
-    Load data from an Excel file and validate its format.
+    Load data from an Excel file.
     """
-    try:
-        # Load the Excel file
-        df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (with titles in the first row)
-
-        # Validation: Ensure there are at least two columns (frequencies in column A and other data columns)
-        if df.shape[1] < 2:
-            raise ValueError("Le fichier doit contenir au moins deux colonnes : une colonne pour les fréquences (colonne A) et d'autres colonnes pour les données.")
-
-        # Validation: Ensure the first column (frequencies) is numeric
-        if not pd.api.types.is_numeric_dtype(df.iloc[:, 0]):
-            raise ValueError("La première colonne (fréquences) doit contenir des valeurs numériques.")
-
-        # Extract frequencies (column A) and absorption data (other columns)
-        frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
-        absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all")  # Remove rows where all values are NaN
-
-        # Ensure absorption data is numeric
-        if not all(pd.api.types.is_numeric_dtype(absorption_data[col]) for col in absorption_data.columns):
-            raise ValueError("Toutes les colonnes de données doivent contenir des valeurs numériques.")
-
-        absorption_data = absorption_data.values  # Convert to numpy array
-
-        # Define thicknesses and densities (example, adapt according to your file)
-        thicknesses = np.array([10, 20, 30])  # Thicknesses: 10, 20, 30 mm
-        densities = np.array([75, 110, 150])  # Densities: 75, 110, 150 kg/m³
-        
-        return frequencies, thicknesses, densities, absorption_data
-
-    except ValueError as e:
-        st.error(f"Erreur de format : {str(e)}")
-        return None, None, None, None
+    # Load the Excel file
+    df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (with titles in the first row)
+    
+    # Extract frequencies (column A)
+    frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
+    
+    # Extract absorption data (all other columns)
+    absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all").values  # Remove rows where all values are NaN
+    
+    # Define thicknesses and densities (example, adapt according to your file)
+    thicknesses = np.array([10, 20, 30])  # Thicknesses: 10, 20, 30 mm
+    densities = np.array([75, 110, 150])  # Densities: 75, 110, 150 kg/m³
+    
+    return frequencies, thicknesses, densities, absorption_data
 
 # Check if files have been uploaded
 if uploaded_file_1 is not None and uploaded_file_2 is not None:
@@ -63,9 +46,9 @@ if uploaded_file_1 is not None and uploaded_file_2 is not None:
     frequencies_1, thicknesses_1, densities_1, absorption_data_1 = load_data_from_excel(uploaded_file_1)
     frequencies_2, thicknesses_2, densities_2, absorption_data_2 = load_data_from_excel(uploaded_file_2)
     
-    # If any of the files are invalid, display an error message
-    if frequencies_1 is None or frequencies_2 is None:
-        st.warning("Les fichiers chargés ne sont pas au format attendu. Veuillez vous assurer qu'ils contiennent des données valides.")
+    # Extract file names without the '.xlsx' extension
+    file_name_1 = os.path.splitext(uploaded_file_1.name)[0]
+    file_name_2 = os.path.splitext(uploaded_file_2.name)[0]
 else:
     # Use default data if one or both files are not uploaded
     file_name_1 = "File_1"
@@ -105,17 +88,11 @@ fig = None  # Initialize fig to None to prevent errors
 
 # Extract absorption data for the selected frequency, thickness, and density
 if uploaded_file_1 and uploaded_file_2:
+    absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
+    absorption_curve_2 = absorption_data_2[:, thickness_index_2 * len(densities_2) + density_index_2]
+
+    # Try plotting the absorption curves
     try:
-        absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
-        absorption_curve_2 = absorption_data_2[:, thickness_index_2 * len(densities_2) + density_index_2]
-
-        # Ensure the curves are correctly indexed
-        if len(frequencies_1) != len(absorption_curve_1):
-            raise ValueError("Les dimensions des données de fréquence et d'absorption ne correspondent pas dans le premier fichier.")
-
-        if len(frequencies_2) != len(absorption_curve_2):
-            raise ValueError("Les dimensions des données de fréquence et d'absorption ne correspondent pas dans le second fichier.")
-        
         fig, ax = plt.subplots(figsize=(10, 8))
 
         # Change the background color of the graph
