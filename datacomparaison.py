@@ -187,8 +187,9 @@ if fig:
     )
 # Display the Git URL with the new formatting
 st.markdown(
-    '<p style="color: darkblue; font-size: 18px; text-align: center;">'
-    'GitHub Link: <a href="https://github.com/LinoVation1312/kundttube" style="color: lightblue; text-decoration: none;" target="_blank">'
+    '<p style="color: blue; font-size: 14px; text-align: center;">'
+    '<br><br><br>''<br><br><br>'
+    'GitHub Link: <a href="https://github.com/LinoVation1312/kundttube" style="color: blue; text-decoration: none;" target="_blank">'
     'https://github.com/LinoVation1312/kundttube</a>'
     '</p>',
     unsafe_allow_html=True
