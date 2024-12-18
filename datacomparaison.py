@@ -25,42 +25,53 @@ def load_data_from_excel(file):
     """
     Load data from an Excel file.
     """
-    # Load the Excel file
-    df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (with titles in the first row)
-    
-    # Extract frequencies (column A)
-    frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
-    
-    # Extract absorption data (all other columns)
-    absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all").values  # Remove rows where all values are NaN
-    
-    # Define thicknesses and densities (example, adapt according to your file)
-    thicknesses = np.array([10, 20, 30])  # Thicknesses: 10, 20, 30 mm
-    densities = np.array([75, 110, 150])  # Densities: 75, 110, 150 kg/m³
-    
-    return frequencies, thicknesses, densities, absorption_data
+    try:
+        # Load the Excel file
+        df = pd.read_excel(file, sheet_name=0, header=0)  # Read the first sheet (with titles in the first row)
 
-# Check if files have been uploaded
-if uploaded_file_1 is not None and uploaded_file_2 is not None:
-    # Load data from the two Excel files
-    frequencies_1, thicknesses_1, densities_1, absorption_data_1 = load_data_from_excel(uploaded_file_1)
-    frequencies_2, thicknesses_2, densities_2, absorption_data_2 = load_data_from_excel(uploaded_file_2)
-    
-    # Extract file names without the '.xlsx' extension
-    file_name_1 = os.path.splitext(uploaded_file_1.name)[0]
-    file_name_2 = os.path.splitext(uploaded_file_2.name)[0]
-else:
-    # Use default data if one or both files are not uploaded
-    file_name_1 = "File_1"
-    file_name_2 = "File_2"
-    frequencies_1 = frequencies_2 = np.array([100, 500, 1000, 2000])
-    thicknesses_1 = thicknesses_2 = np.array([10, 20, 30])
-    densities_1 = densities_2 = np.array([75, 110, 150])
-    absorption_data_1 = absorption_data_2 = np.array([
-        [0.2, 0.4, 0.6, 0.8],
-        [0.25, 0.45, 0.65, 0.85],
-        [0.3, 0.5, 0.7, 0.9]
-    ])
+        # Check if necessary columns exist
+        if df.shape[1] < 2:
+            raise ValueError("The Excel file does not have enough columns for frequencies and absorption data.")
+        
+        # Extract frequencies (column A)
+        frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
+        
+        # Extract absorption data (all other columns)
+        absorption_data = df.iloc[:, 1:].dropna(axis=0, how="all").values  # Remove rows where all values are NaN
+        
+        # Define thicknesses and densities (example, adapt according to your file)
+        thicknesses = np.array([10, 20, 30])  # Thicknesses: 10, 20, 30 mm
+        densities = np.array([75, 110, 150])  # Densities: 75, 110, 150 kg/m³
+
+        return frequencies, thicknesses, densities, absorption_data
+
+    except Exception as e:
+        st.error(f"Error loading file: {e}")
+        return None, None, None, None
+
+# Add spinner for loading process
+with st.spinner("Loading data from Excel files..."):
+    # Check if files have been uploaded
+    if uploaded_file_1 is not None and uploaded_file_2 is not None:
+        # Load data from the two Excel files
+        frequencies_1, thicknesses_1, densities_1, absorption_data_1 = load_data_from_excel(uploaded_file_1)
+        frequencies_2, thicknesses_2, densities_2, absorption_data_2 = load_data_from_excel(uploaded_file_2)
+        
+        # Extract file names without the '.xlsx' extension
+        file_name_1 = os.path.splitext(uploaded_file_1.name)[0]
+        file_name_2 = os.path.splitext(uploaded_file_2.name)[0]
+    else:
+        # Use default data if one or both files are not uploaded
+        file_name_1 = "File_1"
+        file_name_2 = "File_2"
+        frequencies_1 = frequencies_2 = np.array([100, 500, 1000, 2000])
+        thicknesses_1 = thicknesses_2 = np.array([10, 20, 30])
+        densities_1 = densities_2 = np.array([75, 110, 150])
+        absorption_data_1 = absorption_data_2 = np.array([
+            [0.2, 0.4, 0.6, 0.8],
+            [0.25, 0.45, 0.65, 0.85],
+            [0.3, 0.5, 0.7, 0.9]
+        ])
 
 # Custom parameters via the interface
 thickness_selected = st.sidebar.selectbox(
@@ -93,25 +104,41 @@ if uploaded_file_1 and uploaded_file_2:
 
     # Try plotting the absorption curves
     try:
-        fig, ax = plt.subplots(figsize=(10, 8))
+        fig, ax = plt.subplots(figsize=(12, 8))
 
         # Change the background color of the graph
-        fig.patch.set_facecolor('#6f6f7f')  # Dark gray background
-        ax.set_facecolor('#3f3f4f')  # Dark gray axis background
-        ax.tick_params(axis='both', colors='white')  # White tick color
+        fig.patch.set_facecolor('#1f1f1f')  # Darker gray background
+        ax.set_facecolor('#2a2a2a')  # Slightly lighter dark gray axis background
+        ax.tick_params(axis='both', colors='white', labelsize=12)  # White tick color with larger labels
 
-        # Plot the curves
-        ax.plot(frequencies_1, absorption_curve_1, label=file_name_1, color="b", marker="o", markersize=6)
-        ax.plot(frequencies_2, absorption_curve_2, label=file_name_2, color="r", marker="x", markersize=6)
+        # Plot the curves with enhanced styling
+        ax.plot(frequencies_1, absorption_curve_1, label=file_name_1, color="#1f77b4", linestyle='-', marker="o", markersize=8, linewidth=2)
+        ax.plot(frequencies_2, absorption_curve_2, label=file_name_2, color="#ff7f0e", linestyle='--', marker="x", markersize=8, linewidth=2)
 
-        # Add a title and labels
-        ax.set_title(f"Absorption Curves for Thickness {thickness_selected} mm and Density {density_selected} kg/m³", color='white')
-        ax.set_xlabel("Frequency (Hz)", color='white')
-        ax.set_ylabel("Acoustic Absorption", color='white')
-        ax.legend()
+        # Add a title with custom font and styling
+        ax.set_title(f"Absorption Curves for Thickness {thickness_selected} mm and Density {density_selected} kg/m³", 
+                     color='white', fontsize=18, fontweight='bold', fontname="Arial", pad=20)
+        
+        # Add axis labels with custom styling
+        ax.set_xlabel("Frequency (Hz)", color='white', fontsize=16, fontweight='bold', fontname="Arial")
+        ax.set_ylabel("Acoustic Absorption", color='white', fontsize=16, fontweight='bold', fontname="Arial")
 
-        # Enable grid
-        ax.grid(True, linestyle="--", color='white', alpha=0.6)
+        # Add a legend with styling
+        ax.legend(fontsize=14, loc='upper right', facecolor='black', framealpha=0.7, edgecolor='white')
+
+        # Adjust the grid for better visual appearance
+        ax.grid(True, linestyle="--", color='white', alpha=0.4)  # Subtle lighter grid lines
+
+        # Add annotations (optional, but this can highlight key data points)
+        max_y_1 = np.max(absorption_curve_1)
+        max_x_1 = frequencies_1[np.argmax(absorption_curve_1)]
+        ax.annotate(f'Max: {max_y_1:.2f}', xy=(max_x_1, max_y_1), xytext=(max_x_1 + 50, max_y_1 + 0.05),
+                    arrowprops=dict(arrowstyle='->', color='white'), fontsize=12, color='white')
+
+        max_y_2 = np.max(absorption_curve_2)
+        max_x_2 = frequencies_2[np.argmax(absorption_curve_2)]
+        ax.annotate(f'Max: {max_y_2:.2f}', xy=(max_x_2, max_y_2), xytext=(max_x_2 + 50, max_y_2 + 0.05),
+                    arrowprops=dict(arrowstyle='->', color='white'), fontsize=12, color='white')
 
         # Display the graph in Streamlit
         st.pyplot(fig)
