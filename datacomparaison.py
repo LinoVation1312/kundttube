@@ -130,10 +130,10 @@ if uploaded_file_1 and uploaded_file_2:
 
         if area_1 > area_2:
             diff_percentage = ((area_1 - area_2) / area_2) * 100
-            absorption_message = f"{format_filename(file_name_1)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_2)}.".capitalize
+            absorption_message = f"{format_filename(file_name_1)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_2)}.".capitalize()
         else:
             diff_percentage = ((area_2 - area_1) / area_1) * 100
-            absorption_message = f"{format_filename(file_name_2)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_1)}.".capitalize
+            absorption_message = f"{format_filename(file_name_2)} absorbs {diff_percentage:.2f}% more than {format_filename(file_name_1)}.".capitalize()
 
         # Plotting les courbes avec la mention semi-log
         fig, ax = plt.subplots(figsize=(12, 8))
@@ -175,7 +175,7 @@ if uploaded_file_1 and uploaded_file_2:
         # Mention échelle semi-log
         ax.text(
             0.95, -0.1,
-            "Note: The X-axis uses a semi-logarithmic scale", 
+            "X-axis : semi-logarithmic scale", 
             transform=ax.transAxes,
             fontsize=12,
             color="white",
