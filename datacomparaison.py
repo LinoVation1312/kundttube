@@ -137,7 +137,7 @@ if uploaded_file_1 and uploaded_file_2:
         if thickness_selected == 30:
             st.markdown(
                 '<p style="color: orange; font-size: 16px; text-align: center; font-style: italic;">'
-                'Warning: Data may not be representative. This thickness is at the limit of the Kundt tube\'s operating range.'
+                'Warning: Data may not be representative. This thickness is at the limit of the Kundt tube\'s operating range with this type of material.'
                 '</p>',
                 unsafe_allow_html=True
             )
