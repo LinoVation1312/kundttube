@@ -165,6 +165,18 @@ if uploaded_file_1 and uploaded_file_2:
         ax.annotate(f'Max: {max_y_2:.2f}', xy=(max_x_2, max_y_2), xytext=(max_x_2 + 50, max_y_2 + 0.05),
                     arrowprops=dict(arrowstyle='->', color='white'), fontsize=12, color='white')
 
+        # Add a note indicating the semi-logarithmic scale
+        ax.text(
+            0.95, -0.1,  # Position relative à l'axe (x=95% à droite, y=10% en dessous)
+            "Note: The X-axis uses a semi-logarithmic scale", 
+            transform=ax.transAxes,  # Position en coordonnées relatives
+            fontsize=12, 
+            color="white", 
+            ha="right", 
+            va="center", 
+            style="italic"
+        )
+
         # Display the graph in Streamlit
         st.pyplot(fig)
 
