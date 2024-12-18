@@ -35,7 +35,7 @@ def load_data_from_excel(file):
 
         # Validation: Ensure the first column (frequencies) is numeric
         if not pd.api.types.is_numeric_dtype(df.iloc[:, 0]):
-            raise ValueError("The first column (frequencies) should contain numeric values ​​and a title in the first row.")
+            raise ValueError("La première colonne (fréquences) doit contenir des valeurs numériques.")
 
         # Extract frequencies (column A) and absorption data (other columns)
         frequencies = df.iloc[:, 0].dropna().values  # Frequencies in the first column, ignoring empty values
@@ -43,7 +43,7 @@ def load_data_from_excel(file):
 
         # Ensure absorption data is numeric
         if not all(pd.api.types.is_numeric_dtype(absorption_data[col]) for col in absorption_data.columns):
-            raise ValueError("All data columns must contain numeric values ​​and a title in the first row.")
+            raise ValueError("Toutes les colonnes de données doivent contenir des valeurs numériques.")
 
         absorption_data = absorption_data.values  # Convert to numpy array
 
@@ -65,7 +65,7 @@ if uploaded_file_1 is not None and uploaded_file_2 is not None:
     
     # If any of the files are invalid, display an error message
     if frequencies_1 is None or frequencies_2 is None:
-        st.warning("The uploaded files are not in the expected format. Please ensure they contain valid data.")
+        st.warning("Les fichiers chargés ne sont pas au format attendu. Veuillez vous assurer qu'ils contiennent des données valides.")
 else:
     # Use default data if one or both files are not uploaded
     file_name_1 = "File_1"
