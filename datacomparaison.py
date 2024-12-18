@@ -117,7 +117,7 @@ if uploaded_file_1 and uploaded_file_2:
 
         # Change the background color of the graph
         fig.patch.set_facecolor('#6f6f6f')  # Darker gray background
-        ax.set_facecolor('#4f4f4f')  # Slightly lighter dark gray axis background
+        ax.set_facecolor('#afafaf')  # Slightly lighter dark gray axis background
         ax.tick_params(axis='both', colors='white', labelsize=12)  # White tick color with larger labels
 
         # Plot the curves with enhanced styling
