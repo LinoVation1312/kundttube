@@ -123,8 +123,15 @@ if uploaded_file_1 and uploaded_file_2:
         ax.set_xlabel("Frequency (Hz)", color='white', fontsize=16, fontweight='bold', fontname="Arial")
         ax.set_ylabel("Acoustic Absorption", color='white', fontsize=16, fontweight='bold', fontname="Arial")
 
-        # Add a legend with styling
-        ax.legend(fontsize=14, loc='upper right', facecolor='black', framealpha=0.7, edgecolor='white')
+        # Add a legend with improved readability
+        ax.legend(
+            fontsize=14,
+            loc='upper right',
+            facecolor='black',  # Keep the background of the legend black
+            framealpha=0.7,     # Add transparency to the frame
+            edgecolor='white',  # White edge for the legend frame
+            labelcolor='white'  # Set the legend text color to white
+        )
 
         # Adjust the grid for better visual appearance
         ax.grid(True, linestyle="--", color='white', alpha=0.4)  # Subtle lighter grid lines
