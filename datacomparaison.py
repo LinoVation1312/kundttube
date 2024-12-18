@@ -109,79 +109,87 @@ fig = None  # Initialize fig to None to prevent errors
 # Liste des fréquences spécifiques pour les étiquettes de l'axe X
 freq_ticks = [80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300]
 
-# Extract absorption data for the selected frequency, thickness, and density
+
 if uploaded_file_1 and uploaded_file_2:
+    # Extraire les données d'absorption pour chaque fichier
     absorption_curve_1 = absorption_data_1[:, thickness_index_1 * len(densities_1) + density_index_1]
     absorption_curve_2 = absorption_data_2[:, thickness_index_2 * len(densities_2) + density_index_2]
 
-    # Try plotting the absorption curves
     try:
+        # Calculer l'aire sous chaque courbe
+        def calculate_area(frequencies, absorption_curve):
+            # Calcul de l'aire en utilisant la formule trapezoïdale
+            area = np.sum((absorption_curve[:-1] + absorption_curve[1:]) / 2 * np.diff(frequencies))
+            return area
+
+        area_1 = calculate_area(frequencies_1, absorption_curve_1)
+        area_2 = calculate_area(frequencies_2, absorption_curve_2)
+
+        # Comparer les aires
+        if area_1 > area_2:
+            diff_percentage = ((area_1 - area_2) / area_2) * 100
+            absorption_message = f"{file_name_1} absorbe {diff_percentage:.2f}% de plus que {file_name_2}."
+        else:
+            diff_percentage = ((area_2 - area_1) / area_1) * 100
+            absorption_message = f"{file_name_2} absorbe {diff_percentage:.2f}% de plus que {file_name_1}."
+
+        # Afficher le message dans Streamlit
+        st.markdown(f"### {absorption_message}")
+
+        # Plotting les courbes avec la mention semi-log
         fig, ax = plt.subplots(figsize=(12, 8))
 
-        # Change the background color of the graph
-        fig.patch.set_facecolor('#616161')  # Darker gray background
-        ax.set_facecolor('#dfdfdf')  # Slightly lighter dark gray axis background
-        ax.tick_params(axis='both', colors='white', labelsize=12)  # White tick color with larger labels
+        # Arrière-plan
+        fig.patch.set_facecolor('#616161')  # Fond plus sombre
+        ax.set_facecolor('#dfdfdf')  # Fond gris clair pour les axes
+        ax.tick_params(axis='both', colors='white', labelsize=12)
 
-        # Plot the curves with enhanced styling
+        # Courbes
         ax.plot(frequencies_1, absorption_curve_1, label=file_name_1, color="#1f77b4", linestyle='-', marker="x", markersize=9, linewidth=2.2)
         ax.plot(frequencies_2, absorption_curve_2, label=file_name_2, color="#ff7f0e", linestyle='-', marker="x", markersize=9, linewidth=2.2)
 
-        # Add a title with custom font and styling
+        # Échelle logarithmique
+        ax.set_xscale('log')
+        ax.set_xticks(freq_ticks)
+        ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())
+        ax.set_xticklabels(freq_ticks, rotation=25, ha="right", fontsize=12, color='white')
+
+        # Titres et étiquettes
         ax.set_title(f"Absorption Curves for Thickness {thickness_selected} mm and Density {density_selected} kg/m³", 
                      color='white', fontsize=18, fontweight='bold', fontname="Arial", pad=20)
-        
-        # Add axis labels with custom styling
         ax.set_xlabel("Frequency (Hz)", color='white', fontsize=16, fontweight='bold', fontname="Arial")
         ax.set_ylabel("Acoustic Absorption", color='white', fontsize=16, fontweight='bold', fontname="Arial")
 
-        # Set the X-axis to a logarithmic scale with the specific ticks
-        ax.set_xscale('log')  # Échelle logarithmique pour l'axe X
-        ax.set_xticks(freq_ticks)  # Définir les fréquences spécifiques comme ticks
-        ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())  # Forcer les ticks à s'afficher sous forme décimale
-        ax.set_xticklabels(freq_ticks, rotation=25, ha="right", fontsize=12, color='white')  # Rotation et couleur des étiquettes
-
-        # Add a legend with improved readability
+        # Légende
         ax.legend(
             fontsize=14,
             loc='upper left',
-            facecolor='black',  # Keep the background of the legend black
-            framealpha=0.7,     # Add transparency to the frame
-            edgecolor='white',  # White edge for the legend frame
-            labelcolor='white'  # Set the legend text color to white
+            facecolor='black',
+            framealpha=0.7,
+            edgecolor='white',
+            labelcolor='white'
         )
 
-        # Adjust the grid for better visual appearance
-        ax.grid(True, linestyle="--", color='black', alpha=0.8)  # Subtle lighter grid lines
+        # Grille
+        ax.grid(True, linestyle="--", color='black', alpha=0.8)
 
-        # Add annotations (optional, but this can highlight key data points)
-        max_y_1 = np.max(absorption_curve_1)
-        max_x_1 = frequencies_1[np.argmax(absorption_curve_1)]
-        ax.annotate(f'Max: {max_y_1:.2f}', xy=(max_x_1, max_y_1), xytext=(max_x_1 + 50, max_y_1 + 0.05),
-                    arrowprops=dict(arrowstyle='->', color='white'), fontsize=12, color='white')
-
-        max_y_2 = np.max(absorption_curve_2)
-        max_x_2 = frequencies_2[np.argmax(absorption_curve_2)]
-        ax.annotate(f'Max: {max_y_2:.2f}', xy=(max_x_2, max_y_2), xytext=(max_x_2 + 50, max_y_2 + 0.05),
-                    arrowprops=dict(arrowstyle='->', color='white'), fontsize=12, color='white')
-
-        # Add a note indicating the semi-logarithmic scale
+        # Mention échelle semi-log
         ax.text(
-            0.95, -0.1,  # Position relative à l'axe (x=95% à droite, y=10% en dessous)
-            "X-axis : semi-logarithmic scale", 
-            transform=ax.transAxes,  # Position en coordonnées relatives
-            fontsize=12, 
-            color="white", 
-            ha="right", 
-            va="center", 
+            0.95, -0.1,
+            "Note: The X-axis uses a semi-logarithmic scale", 
+            transform=ax.transAxes,
+            fontsize=12,
+            color="white",
+            ha="right",
+            va="center",
             style="italic"
         )
 
-        # Display the graph in Streamlit
+        # Afficher le graphique dans Streamlit
         st.pyplot(fig)
 
     except ValueError as e:
-        # Handle the error without displaying it intrusively
+        # Gestion des erreurs
         st.markdown(
             f'<p style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; color: red;">Dimension error: {str(e)}</p>',
             unsafe_allow_html=True
