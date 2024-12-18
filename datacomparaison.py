@@ -126,7 +126,7 @@ if uploaded_file_1 and uploaded_file_2:
 
         # Comparer les aires
         def format_filename(filename):
-            return filename.replace("_", " ")
+            return filename.replace("_", " ").replace("-", " ").replace("FG", "Fiber Glass").replace("fg", "Fiber Glass")
 
         if area_1 > area_2:
             diff_percentage = ((area_1 - area_2) / area_2) * 100
