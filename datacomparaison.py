@@ -191,6 +191,8 @@ st.markdown(
     '<br><br><br>''<br><br><br>''<br><br><br>''<br><br><br>''<br><br><br>''<br><br><br>''<br><br><br>''<br><br><br>'
     'GitHub Link: <a href="https://github.com/LinoVation1312/kundttube" style="color: blue; text-decoration: none;" target="_blank">'
     'https://github.com/LinoVation1312/kundttube</a>'
+    '<br><br><br>'
+    'Lino CONORD, Déc. 2024'
     '</p>',
     unsafe_allow_html=True
 )
