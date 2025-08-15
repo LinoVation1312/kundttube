@@ -32,9 +32,6 @@ Les fichiers Excel doivent contenir les données suivantes :
 La première colonne pour les fréquences (en Hz).
 Les autres colonnes pour les coefficients d'absorption pour différentes combinaisons d'épaisseur et de densité.
 
-Voici une capture d'écran de l'interface de l'application :
-
-
 Contributions
 Les contributions sont les bienvenues ! Si vous avez des suggestions ou des améliorations à proposer, n'hésitez pas à ouvrir une issue ou à soumettre une pull request.
 
